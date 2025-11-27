@@ -1,0 +1,13 @@
+train/
+test/
+uploads/
+__pycache__/
+*.pyc
+*.pyo
+uploads/
+database.db
+.DS_Store
+*.log
+venv/
+env/
+.env

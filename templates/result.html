@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotion Detection Result</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        
+        .student-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .student-info p {
+            margin: 8px 0;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        .student-info strong {
+            color: #333;
+        }
+        
+        .uploaded-image {
+            margin: 20px 0;
+        }
+        
+        .uploaded-image img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 10px;
+            border: 3px solid #667eea;
+        }
+        
+        .emotion-result {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .emotion-result h2 {
+            font-size: 48px;
+            margin: 10px 0;
+        }
+        
+        .emotion-result .message {
+            font-size: 24px;
+            margin: 15px 0;
+        }
+        
+        .confidence {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        
+        .emoji {
+            font-size: 80px;
+            margin: 10px 0;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 15px 40px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .timestamp {
+            color: #999;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✅ Detection Complete!</h1>
+        
+        <!-- Student Information -->
+        <div class="student-info">
+            <p><strong>Name:</strong> {{ name }}</p>
+            <p><strong>Detected Emotion:</strong> {{ emotion }}</p>
+            <p><strong>Confidence:</strong> {{ confidence }}%</p>
+        </div>
+        
+        <!-- Uploaded Image -->
+        <div class="uploaded-image">
+            <img src="{{ url_for('uploaded_file', filename=image_path) }}" alt="Uploaded Photo">
+        </div>
+        
+        <!-- Emotion Result -->
+        <div class="emotion-result">
+            <div class="emoji">
+                {% if emotion == 'Happy' %}😊
+                {% elif emotion == 'Sad' %}😢
+                {% elif emotion == 'Angry' %}😠
+                {% elif emotion == 'Surprise' %}😮
+                {% elif emotion == 'Fear' %}😰
+                {% elif emotion == 'Disgust' %}🤢
+                {% else %}😐
+                {% endif %}
+            </div>
+            <h2>{{ emotion }}!</h2>
+            <p class="message">{{ message }}</p>
+            <p class="confidence">Confidence: {{ confidence }}%</p>
+        </div>
+        
+        <!-- Back Button -->
+        <a href="/" class="back-btn">🔄 Analyze Another Photo</a>
+        
+        <p class="timestamp">Data saved successfully to database ✓</p>
+    </div>
+</body>
+</html>
