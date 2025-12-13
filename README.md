@@ -1,7 +1,5 @@
 # Face Emotion Detection System
 
-## Assignment 2: Bioinformatics Masters Program
-
 ### Description
 AI-powered web application that detects emotions from facial images using deep learning.
 
@@ -32,9 +30,8 @@ python app.py             # Run web app
 ```
 
 ### Deployment
-Deployed on Render: [Your URL will go here]
+Deployed on Railway: https://jimoh-face-detection.up.railway.app/
 
 ### Author
 **Student:** Jimoh-Alabi Islamiat Modupeoluwa  
-**Student ID:** 250000033
 **Program:** Masters in Bioinformatics
