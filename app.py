@@ -1,9 +1,8 @@
-"""
+""""
 Face Emotion Detection - Flask Web Application
-Assignment 2: Bioinformatics Masters Program
 """
 
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
 import os
 import sqlite3
 from datetime import datetime
@@ -52,8 +51,9 @@ EMOTION_MESSAGES = {
     'Neutral': "You have a neutral expression. Feeling calm? 😐"
 }
 
+
 # ============================================
-# DOWNLOAD AND LOAD MODEL
+# DOWNLOAD MODEL IF NOT EXISTS
 # ============================================
 
 def download_model():
@@ -62,43 +62,98 @@ def download_model():
         print("✓ Model file found!")
         return True
         
-    print("Downloading model...")
+    print("Downloading model from GitHub...")
     try:
         import urllib.request
         MODEL_URL = "https://github.com/dupe146/face-emotion-detection/releases/download/v1.0/face_emotionModel.h5"
         urllib.request.urlretrieve(MODEL_URL, MODEL_PATH)
-        print("✓ Model downloaded!")
-        return True
+        
+        # Verify download
+        if os.path.exists(MODEL_PATH):
+            size = os.path.getsize(MODEL_PATH) / (1024 * 1024)
+            print(f"✓ Model downloaded! Size: {size:.2f} MB")
+            return True
+        else:
+            print("✗ Download failed - file not created")
+            return False
+            
     except Exception as e:
         print(f"✗ Download failed: {e}")
         return False
 
-# Load model
-model = None
-print("="*60)
-print("LOADING MODEL...")
-print("="*60)
+# ============================================
+# LOAD THE TRAINED MODEL (VERSION-SAFE)
+# ============================================
 
-try:
-    if download_model():
+model = None
+
+def load_model_safe():
+    """Load model with TensorFlow version compatibility"""
+    global model
+    
+    try:
+        # First, ensure model file exists
+        if not download_model():
+            print("ERROR: Could not get model file!")
+            return False
+        
+        print(f"Loading model from: {MODEL_PATH}")
+        
+        # Import TensorFlow
         from tensorflow import keras
+        import tensorflow as tf
         
-        # Load without compiling (fixes version issues)
-        model = keras.models.load_model(MODEL_PATH, compile=False)
+        # Try loading with safe_mode=False for old models
+        try:
+            model = keras.models.load_model(
+                MODEL_PATH, 
+                compile=False,
+                safe_mode=False
+            )
+            print("✓ Model loaded successfully!")
+            
+        except Exception as load_error:
+            print(f"Standard load failed: {load_error}")
+            print("Trying alternative method...")
+            
+            # Try with custom_objects
+            model = tf.keras.models.load_model(
+                MODEL_PATH,
+                custom_objects={'InputLayer': tf.keras.layers.InputLayer},
+                compile=False
+            )
+            print("✓ Model loaded with custom_objects!")
         
-        # Recompile
+        # Compile the model
         model.compile(
             optimizer='adam',
             loss='categorical_crossentropy',
             metrics=['accuracy']
         )
-        print("✓ Model loaded successfully!")
-    else:
-        print("✗ Model not available")
-except Exception as e:
-    print(f"✗ Model error: {e}")
-    model = None
+        
+        print("✓ Model ready for predictions!")
+        return True
+        
+    except Exception as e:
+        print(f"✗ CRITICAL ERROR: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
 
+# Initialize model on startup
+print("\n" + "="*60)
+print("INITIALIZING EMOTION DETECTION MODEL")
+print("="*60)
+
+model_loaded = load_model_safe()
+
+if not model_loaded:
+    print("⚠️  WARNING: App running without model!")
+    model = None
+else:
+    print("✓ Ready for emotion detection!")
+
+print("="*60 + "\n")
 # ============================================
 # DATABASE SETUP
 # ============================================
