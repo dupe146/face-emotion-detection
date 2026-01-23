@@ -55,30 +55,38 @@ EMOTION_MESSAGES = {
 # ============================================
 # DOWNLOAD MODEL IF NOT EXISTS
 # ============================================
-
 def download_model():
-    """Download model from GitHub if not present"""
+    """Download model from Google Drive if not present"""
     if os.path.exists(MODEL_PATH):
-        print("✓ Model file found!")
+        print("✓ Model file found locally!")
         return True
         
-    print("Downloading model from GitHub...")
+    print("Model not found. Downloading from Google Drive...")
     try:
-        import urllib.request
-        MODEL_URL = "https://github.com/dupe146/face-emotion-detection/releases/download/v1.0/face_emotionModel.h5"
-        urllib.request.urlretrieve(MODEL_URL, MODEL_PATH)
+        import gdown
+        
+        # Replace YOUR_FILE_ID with the actual ID from Google Drive link
+        file_id = "1m3QdxrBX0PvEGC-FtPVEhSvIukafZos8"  # ← PASTE YOUR FILE_ID HERE!
+        url = f"https://drive.google.com/uc?id={file_id}"
+        
+        print(f"Downloading from Google Drive...")
+        gdown.download(url, MODEL_PATH, quiet=False)
         
         # Verify download
         if os.path.exists(MODEL_PATH):
             size = os.path.getsize(MODEL_PATH) / (1024 * 1024)
-            print(f"✓ Model downloaded! Size: {size:.2f} MB")
+            print(f"✓ Model downloaded successfully! Size: {size:.2f} MB")
             return True
         else:
-            print("✗ Download failed - file not created")
+            print("✗ Download verification failed")
             return False
             
     except Exception as e:
         print(f"✗ Download failed: {e}")
+        print("Please check:")
+        print("1. Google Drive link is public")
+        print("2. File ID is correct")
+        print("3. gdown package is installed")
         return False
 
 # ============================================
