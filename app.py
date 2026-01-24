@@ -239,6 +239,17 @@ print("="*60)
 
 model_loaded = convert_and_load_model()
 
+
+# Warmup the model with a dummy prediction
+if model_loaded and model is not None:
+    try:
+        print("Warming up model...")
+        dummy_img = np.zeros((1, 48, 48, 1))
+        model.predict(dummy_img, verbose=0)
+        print("✓ Model warmed up!")
+    except:
+        pass
+
 if not model_loaded or model is None:
     print("⚠️  WARNING: App running without model!")
 else:
