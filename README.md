@@ -30,7 +30,7 @@ python app.py             # Run web app
 ```
 
 ### Deployment
-Deployed on Railway: https://jimoh-face-detection.up.railway.app/
+Deployed on Render: https://face-emotion-detection-wl8x.onrender.com
 
 ### Author
 **Student:** Jimoh-Alabi Islamiat Modupeoluwa  
